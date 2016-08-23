@@ -16,6 +16,11 @@ defmodule ExMachina.Mixfile do
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       package: package,
+      # use test env for dialyze because test coe is a superset of dev and this will point out errors in test helper and
+      # test functions.
+      preferred_cli_env: [
+        dialyze: :test
+      ],
       docs: [main: "readme", extras: ["README.md"]],
       deps: deps
     ]
@@ -34,6 +39,7 @@ defmodule ExMachina.Mixfile do
 
   defp deps do
     [
+      {:dialyze, "~> 0.2.1", only: [:dev, :test]},
       {:ex_doc, "~> 0.9", only: :dev},
       {:earmark, ">= 0.0.0", only: :dev},
       {:ecto, "~> 2.0", optional: true},

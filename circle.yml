@@ -1,11 +1,23 @@
 dependencies:
+  cache_directories:
+    # `mix dialyze` caches PLTs (which take minutes to build) in _build, so it saves a lot of time to cache _build
+    - _build
   pre:
     - wget http://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb && sudo dpkg -i erlang-solutions_1.0_all.deb
     - sudo apt-get update
+    # Ubuntu's erlang package doesn't include the dialyzer module by default
+    - sudo apt-get install erlang-dialyzer
     - sudo apt-get install elixir
     - yes | mix deps.get
     - mix local.rebar
+  post:
+    # compile for mix dialyze
+    - MIX_ENV=test mix compile
+    # generate PLTs so they are stored in cache
+    - mix dialyze --no-analyze
 test:
   override:
     - MIX_ENV=prod mix compile --warnings-as-errors
     - mix test
+  override:
+    - mix dialyze
