@@ -141,11 +141,14 @@ defmodule ExMachina do
   """
   def build(module, factory_name, attrs \\ %{}) do
     attrs = Enum.into(attrs, %{})
-    function_name = Atom.to_string(factory_name) <> "_factory" |> String.to_atom
+    factory_name_string = Atom.to_string(factory_name)
+    function_name = factory_name_string <> "_factory" |> String.to_atom
     if Code.ensure_loaded?(module) && function_exported?(module, function_name, 0) do
       apply(module, function_name, []) |> do_merge(attrs)
     else
-      raise UndefinedFactoryError, factory_name
+      # Pass String form of factory_name to maintain contract for Exception.exception/1, which expects a Keyword.t or
+      # String.t
+      raise UndefinedFactoryError, factory_name_string
     end
   end
 
