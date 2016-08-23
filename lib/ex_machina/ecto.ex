@@ -27,6 +27,8 @@ defmodule ExMachina.Ecto do
           ExMachina.Ecto.params_with_assocs(__MODULE__, factory_name, attrs)
         end
 
+        @spec fields_for(atom) :: no_return
+        @spec fields_for(atom, map) :: no_return
         def fields_for(factory_name, attrs \\ %{}) do
           raise "fields_for/2 has been renamed to params_for/2."
         end
